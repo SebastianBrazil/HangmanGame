@@ -103,9 +103,27 @@ userInput.addEventListener("keydown", function (e) {
                     displayedWord[i] = guess;
                 };
             };
+        }else{
+            wrongGuess += guess;
+            wrongGuesses.textContent = wrongGuess;
+            guesses++;
         };
 
-        updateGameState();
 
+        updateGameState();
+        userInput.value = "";
+        gameEnd();
     };
 }); 
+
+function gameEnd() {
+    //checking if our guesses = to max guesses Loser
+    //check if our secret word = displayedword winner
+
+    if(guesses === maxGuesses){
+        alert(`You lose your word was ${randomWord}`);
+        resetGame();
+    }else if(displayedWord.join("") === randomWord) {
+        alert(`Yay you won you guessed: ${randomWord}`);
+    }
+}
