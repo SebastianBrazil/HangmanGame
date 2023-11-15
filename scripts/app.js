@@ -41,6 +41,22 @@ startBtn.addEventListener('click', function () {
     ApiCall();
 });
 
+restartBtn.addEventListener('click', function () {
+    resetGame();
+});
+
+function resetGame() {
+    randomWord = "";
+    wrongGuess = "";
+    displayedWord = [];
+    guesses = 0;
+    wrongGuesses.textContent = "";
+    userInput.readOnly = true;
+    secretWord.textContent = "[Secret Word]";
+    hangMan.textContent = "Hangman / Guesses Left";
+    userInput.value = "";
+}
+
 function ApiCall() {
     // we initiate the fetch request from our random word API
     fetch('https://random-word-api.herokuapp.com/word')
@@ -48,22 +64,24 @@ function ApiCall() {
             //were .json() to parse the response into json data
             return response.json();
         })
-            .then((data) => {
-                console.log(data[0]);
-                startGame(data[0])
-            })
+        .then((data) => {
+            console.log(data[0]);
+            startGame(data[0])
+        })
 };
 
 function startGame(word) {
+    displayedWord = [];
     randomWord = word;
 
     // now we have change our displayed to have _ for the length of our random word
 
-    for(let i = 0; i < randomWord.length; i++){
+    for (let i = 0; i < randomWord.length; i++) {
         displayedWord[i] = "_";
     }
     // we will update our "game state"
     updateGameState();
+    userInput.readOnly = false;
 };
 
 function updateGameState() {
@@ -71,3 +89,23 @@ function updateGameState() {
 
     hangMan.textContent = `Guesses left ${guesses} / ${maxGuesses}`
 };
+
+userInput.addEventListener("keydown", function (e) {
+
+    if (event.key === "Enter") {
+        let guess = userInput.value.toLowerCase();
+        //check if the user's guess is included in our secret word.
+        if (randomWord.includes(guess)) {
+            // now that we know that guess is included, we have to figure out at what index its included
+            for (let i = 0; i < randomWord.length; i++) {
+
+                if (randomWord[i] === guess) {
+                    displayedWord[i] = guess;
+                };
+            };
+        };
+
+        updateGameState();
+
+    };
+}); 
